@@ -1,0 +1,13 @@
+// Find the latest log receipt time for each source.
+// All records below are synthetic.
+
+datatable(Source: string, ReceivedAt: datetime)
+[
+    "Firewall", datetime(2026-10-06T06:00:00Z),
+    "Firewall", datetime(2026-10-06T06:05:00Z),
+    "Identity", datetime(2026-10-06T05:30:00Z),
+    "Identity", datetime(2026-10-06T06:10:00Z),
+    "Endpoint", datetime(2026-10-06T03:00:00Z)
+]
+| summarize LastReceived = max(ReceivedAt) by Source
+| order by LastReceived asc
