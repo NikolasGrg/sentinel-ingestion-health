@@ -59,6 +59,10 @@ All sample timestamps are in UTC.
 | Identity | 2026-10-06 06:10:00 | 00:50:00 | Within threshold |
 | VPN | null | null | No records |
 
+## Screenshot
+
+![Ingestion health query results](ingestion-health-result.png)
+
 ## Status meanings
 
 - **Within threshold**: elapsed time is less than or equal to the threshold.
