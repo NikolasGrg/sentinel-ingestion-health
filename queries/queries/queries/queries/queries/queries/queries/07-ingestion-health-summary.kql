@@ -1,0 +1,33 @@
+let ReferenceTime = datetime(2026-10-06T07:00:00Z);
+let SilenceThreshold = 2h;
+
+let ExpectedSources = datatable(Source: string)
+[
+    "Firewall",
+    "Identity",
+    "Endpoint",
+    "VPN"
+];
+
+let SampleLogs = datatable(Source: string, ReceivedAt: datetime)
+[
+    "Firewall", datetime(2026-10-06T06:00:00Z),
+    "Firewall", datetime(2026-10-06T06:05:00Z),
+    "Identity", datetime(2026-10-06T05:30:00Z),
+    "Identity", datetime(2026-10-06T06:10:00Z),
+    "Endpoint", datetime(2026-10-06T03:00:00Z)
+];
+
+ExpectedSources
+| join kind=leftouter (
+    SampleLogs
+    | summarize LastReceived = max(ReceivedAt) by Source
+) on Source
+| extend TimeSinceLastLog = ReferenceTime - LastReceived
+| extend Status = case(
+    isnull(LastReceived), "No records",
+    TimeSinceLastLog > SilenceThreshold, "Check",
+    "Within threshold"
+)
+| project Source, LastReceived, TimeSinceLastLog, Status
+| order by Source asc
